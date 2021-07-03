@@ -24,11 +24,11 @@ export default class Slide extends Component {
     },
     goLeft: {
       transition: "none 0.55s ease",
-      transform: "translate3d(550px, 0px, 0px)"
+      transform: "translate3d(-550px, 0px, 0px)"
     },
     goRight: {
       transition: "none 0.55s ease",
-      transform: "translate3d(-550px, 0px, 0px)"
+      transform: "translate3d(550px, 0px, 0px)"
     }
   };
 

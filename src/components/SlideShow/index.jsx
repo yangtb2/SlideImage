@@ -16,21 +16,21 @@ export default class SlideShow extends Component {
         src: "/img/715b6b4ef4828849992b3a616bb8953617ec84b7.jpg",
         title: "当你全身细胞开始说中文11111111",
         href: "https://www.bilibili.com/bangumi/play/ep408287/",
-        action: "ready"
+        action: "goRight"
       },
       {
         id: 3,
         src: "/img/b5bbe5f0ac01033c14a5075e472af8cff45d6696.jpg",
         title: "这才是夏天该有的样子22222222",
         href: "https://www.bilibili.com/read/cv11866588",
-        action: "ready"
+        action: "goRight"
       },
       {
         id: 4,
         src: "/img/715b6b4ef4828849992b3a616bb8953617ec84b7.jpg",
         title: "当你全身细胞开始说中文22222222",
         href: "https://www.bilibili.com/bangumi/play/ep408287/",
-        action: "ready"
+        action: "goRight"
       }
     ]
   };
@@ -54,8 +54,20 @@ export default class SlideShow extends Component {
   };
 
   goto = index => {
+    if (index === this.curIndex) return;
     clearTimeout(this.timer);
-    this.setState({ curIndex: index });
+    const { sliders } = this.state;
+    const backward = index < this.curIndex;
+    sliders[index].action = backward ? "goLeft" : "goRight";
+    this.setState({ sliders });
+
+    setTimeout(() => {
+      clearTimeout(this.timer);
+      sliders[this.curIndex].action = backward ? "backout" : "forwardout";
+      sliders[index].action = backward ? "backin" : "forwardin";
+      this.curIndex = index;
+      this.setState(sliders);
+    }, 16);
   };
 
   back = () => {
@@ -63,7 +75,7 @@ export default class SlideShow extends Component {
     const { sliders } = this.state;
     const curIndex = (this.curIndex + 3) % 4;
 
-    sliders[curIndex].action = "goRight";
+    sliders[curIndex].action = "goLeft";
     this.setState({ sliders });
 
     setTimeout(() => {
@@ -75,11 +87,37 @@ export default class SlideShow extends Component {
     }, 16);
   };
 
-  render() {
-    const { curIndex, sliders } = this.state;
+  forward = () => {
+    clearTimeout(this.timer);
+    const { sliders } = this.state;
+    const curIndex = (this.curIndex + 1) % 4;
+
+    sliders[curIndex].action = "goRight";
+    this.setState({ sliders });
+
+    setTimeout(() => {
+      clearTimeout(this.timer);
+      sliders[curIndex].action = "forwardin";
+      sliders[(curIndex + 3) % 4].action = "forwardout";
+      this.curIndex = curIndex;
+      this.setState({ sliders });
+    }, 16);
+  };
+
+  componentDidUpdate() {
     this.timer = setTimeout(() => {
       this.autoStep();
     }, 2000);
+  }
+
+  componentDidMount() {
+    this.timer = setTimeout(() => {
+      this.autoStep();
+    }, 2000);
+  }
+
+  render() {
+    const { sliders } = this.state;
     return (
       <div className="slide-container">
         {sliders.map(slider => {
@@ -96,13 +134,19 @@ export default class SlideShow extends Component {
         })}
         <ul className="slide-trigger">
           <li onClick={this.back}>&lt;</li>
-          <li>
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-          </li>
-          <li>&gt;</li>
+          {sliders.map((slide, index) => {
+            return (
+              <li
+                key={index}
+                onClick={() => {
+                  this.goto(index);
+                }}
+              >
+                {index + 1}
+              </li>
+            );
+          })}
+          <li onClick={this.forward}>&gt;</li>
         </ul>
       </div>
     );
