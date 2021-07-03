@@ -1,3 +1,5 @@
+# 这是一个基于CSS的过渡效果实现的React轮播图组件(仿[哔哩哔哩](https://bilibili.com)首页轮播图)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
